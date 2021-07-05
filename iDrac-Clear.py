@@ -66,7 +66,7 @@ class raidData:
 
     def getControllers(self):
         try:
-            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! storage get controllers".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password storage get controllers".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output = sub.stdout.readlines()
             for r in output:
                 if "RAID" in str(r).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", ""):
@@ -86,7 +86,7 @@ class clearConfig():
 
     def clearName(self):
         try:
-            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! set iDRAC.Nic.DNSRacName iDrac-{}".format(self.ip, self.serviceTag)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password set iDRAC.Nic.DNSRacName iDrac-{}".format(self.ip, self.serviceTag)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output = sub.stdout.readlines()
             for line in output:
                 if "successfully" in str(line) or "Success" in str(line):
@@ -97,7 +97,7 @@ class clearConfig():
 
     def clearTZ(self):
         try:
-            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! set idrac.time.timezone UTC".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password set idrac.time.timezone UTC".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output = sub.stdout.readlines()
             for line in output:
                 if "successfully" in str(line) or "Success" in str(line):
@@ -108,7 +108,7 @@ class clearConfig():
 
     def clearBootMode(self):
         try:
-            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! set BIOS.BiosBootSettings.BootMode Bios".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password set BIOS.BiosBootSettings.BootMode Bios".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output = sub.stdout.readlines()
             for line in output:
                 if "successfully" in str(line) or "Success" in str(line):
@@ -119,7 +119,7 @@ class clearConfig():
 
     def clearVConsole(self):
         try:
-            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! set idrac.VirtualConsole.plugintype HTML5".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password set idrac.VirtualConsole.plugintype HTML5".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output = sub.stdout.readlines()
             for line in output:
                 if "successfully" in str(line) or "Success" in str(line):
@@ -130,7 +130,7 @@ class clearConfig():
 
     async def clearAllVD(self):
         try:
-            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn storage get vdisks".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn storage get vdisks".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output = sub.stdout.readlines()
 
             if "No virtual disks are displayed" in str(output[0]):
@@ -145,12 +145,12 @@ class clearConfig():
                     #delete vd command
                     toClear = str(raid).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
                     print("Deleting raid from VD: {} for server {}".format(toClear, self.name))
-                    sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn raid deletevd:{}".format(self.ip, toClear)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn raid deletevd:{}".format(self.ip, toClear)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     output = sub.stdout.readlines()
 
                     #Create JobQueue if successfull    
                     if len(sub.stderr.readlines()) == 0:
-                        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn jobqueue create {} --realtime".format(self.ip, controller)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn jobqueue create {} --realtime".format(self.ip, controller)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                         output = sub.stdout.readlines()
                         line = str(output[2]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
 
@@ -162,7 +162,7 @@ class clearConfig():
                             trueUntil = True
                             while trueUntil:
                                 #Run until job is done
-                                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn jobqueue view -i {}".format(self.ip, JID)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn jobqueue view -i {}".format(self.ip, JID)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 lines = sub.stdout.readlines()
                                 line3 = str(lines[3]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
                                 line7 = str(lines[7]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
@@ -184,7 +184,7 @@ class clearConfig():
 
     def clearIP(self):
         try:
-            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! Setniccfg -d".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password Setniccfg -d".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output = sub.stdout.readlines()
             for line in output:
                 if "ENABLED" in str(line):
