@@ -55,7 +55,7 @@ class iDracConf:
     def setName(self):
         if self.name != "N/A":
             try:
-                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! set iDRAC.Nic.DNSRacName {}".format(self.ip, self.name)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password set iDRAC.Nic.DNSRacName {}".format(self.ip, self.name)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output = sub.stdout.readlines()
                 for line in output:
                     if "successfully" in str(line) or "Success" in str(line):
@@ -67,7 +67,7 @@ class iDracConf:
     def setTZ(self):
         if self.timezone != "N/A":
             try:
-                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! set idrac.time.timezone {}".format(self.ip, self.timezone)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password set idrac.time.timezone {}".format(self.ip, self.timezone)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output = sub.stdout.readlines()
                 for line in output:
                     if "successfully" in str(line) or "Success" in str(line):
@@ -79,7 +79,7 @@ class iDracConf:
     def setBootMode(self):
         if self.boot_mode != "N/A":
             try:
-                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! set BIOS.BiosBootSettings.BootMode {}".format(self.ip, self.boot_mode)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password set BIOS.BiosBootSettings.BootMode {}".format(self.ip, self.boot_mode)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output = sub.stdout.readlines()
                 for line in output:
                     if "successfully" in str(line) or "Success" in str(line):
@@ -91,7 +91,7 @@ class iDracConf:
     def setVconsole(self):
         if self.vconsole != "N/A":
             try:
-                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! set idrac.VirtualConsole.plugintype {}".format(self.ip, self.vconsole)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password set idrac.VirtualConsole.plugintype {}".format(self.ip, self.vconsole)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output = sub.stdout.readlines()
                 for line in output:
                     if "successfully" in str(line) or "Success" in str(line):
@@ -118,12 +118,12 @@ class iDracConf:
                 bayString = raid.getDisksLocation(diskString)
 
                 print(colors.OKPURPLE + "Configuring VD_0 ({}) for server {}\nThe raid will be created on disks: {}".format(raidNames[0], self.name, bayString) + colors.ENDC)
-                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! raid createvd:{} -rl {} -wp wb -rp ra -pdkey:{} -name {}".format(self.ip, controller, raidLevel[0], diskString, raidNames[0])],
+                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password raid createvd:{} -rl {} -wp wb -rp ra -pdkey:{} -name {}".format(self.ip, controller, raidLevel[0], diskString, raidNames[0])],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
                 #Create JobQueue if successfull    
                 if len(sub.stderr.readlines()) == 0:
-                    sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn jobqueue create {} --realtime".format(self.ip, controller)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn jobqueue create {} --realtime".format(self.ip, controller)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     output = str(sub.stdout.readlines()[2]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
                     JID = output.split("=")[1]
                     print("Job has been initiated succesfully on server {} with JID {}".format(self.name, JID))
@@ -132,7 +132,7 @@ class iDracConf:
                         trueUntil = True
                         while trueUntil:
                             #Run until job is done
-                            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn jobqueue view -i {}".format(self.ip, JID)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn jobqueue view -i {}".format(self.ip, JID)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                             lines = sub.stdout.readlines()
                             line3 = str(lines[3]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
                             line7 = str(lines[7]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
@@ -177,12 +177,12 @@ class iDracConf:
 
             try:
                 print(colors.OKPURPLE + "Configuring VD_1 ({}) for server {}\nThe raid will be created on disks: {}".format(raidNames[0], self.name, bayString) + colors.ENDC)
-                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! raid createvd:{} -rl {} -wp wb -rp ra -pdkey:{} -name {}".format(self.ip, controller, raidLevel[1], diskString, raidNames[1])],
+                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password raid createvd:{} -rl {} -wp wb -rp ra -pdkey:{} -name {}".format(self.ip, controller, raidLevel[1], diskString, raidNames[1])],
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
                 #Create JobQueue if successfull    
                 if len(sub.stderr.readlines()) == 0:
-                    sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn jobqueue create {} --realtime".format(self.ip, controller)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn jobqueue create {} --realtime".format(self.ip, controller)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     output = str(sub.stdout.readlines()[2]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
 
                     JID = output.split("=")[1]
@@ -192,7 +192,7 @@ class iDracConf:
                         trueUntil = True
                         while trueUntil:
                             #Run until job is done
-                            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn jobqueue view -i {}".format(self.ip, JID)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn jobqueue view -i {}".format(self.ip, JID)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                             lines = sub.stdout.readlines()
                             line3 = str(lines[3]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
                             line7 = str(lines[7]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
@@ -216,7 +216,7 @@ class iDracConf:
     def iDrac_IP(self):
         if self.ip_check == 1:
             try:
-                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! Setniccfg -s {} {} {}".format(self.tmp_ip, self.ip, self.subnet, self.gateway)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password Setniccfg -s {} {} {}".format(self.tmp_ip, self.ip, self.subnet, self.gateway)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output = sub.stdout.readlines()
                 for line in output:
                     if "successfully" in str(line) or "Success" in str(line):
@@ -292,7 +292,7 @@ class raidData:
 
     def getControllers(self):
         try:
-            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! storage get controllers".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password storage get controllers".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output = sub.stdout.readlines()
             for r in output:
                 if "RAID" in str(r).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", ""):
@@ -307,7 +307,7 @@ class raidData:
     def getDisksNames(self):
         raidDisks = []
         try:
-            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn storage get pdisks -o -p size".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn storage get pdisks -o -p size".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output = sub.stdout.readlines()
             pdisks = {}
             for disk, size in zip(range(0, len(output), +2), range(1, len(output), +2)):
@@ -439,7 +439,7 @@ class raidData:
                     
                     else:
                         #get all disks names and states
-                        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn storage get pdisks -o -p state".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn storage get pdisks -o -p state".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                         output = sub.stdout.readlines()
 
                         #collect all disks in "Ready" state
