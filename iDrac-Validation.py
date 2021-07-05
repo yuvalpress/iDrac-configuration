@@ -79,7 +79,7 @@ class iDrac_Validation():
         elif ping(tmp_ip): self.pingable = tmp_ip
 
     def validateName(self):
-        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn get iDRAC.Nic.DNSRacName".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn get iDRAC.Nic.DNSRacName".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = str(sub.stdout.readlines()[1])
         if "=" in output:
             racadmName = output.replace("\\r", "").replace("\\n", "").strip("b'").split("=")[1]
@@ -94,7 +94,7 @@ class iDrac_Validation():
             print("Server name Status:     " + colors.FAIL + "Error getting data from racadm" + colors.ENDC + "                   " + self.name)
 
     def validateServiceTag(self):
-        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn getsvctag".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn getsvctag".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = str(sub.stdout.readlines()[0])
         racadmSvctag = output.replace("\\r", "").replace("\\n", "").strip("b'").replace(" ", "")
         space = 48 - len(racadmSvctag)
@@ -105,7 +105,7 @@ class iDrac_Validation():
             print("Server Service Tag Status:      " + colors.FAIL + racadmSvctag + colors.ENDC + " "*space + self.svctag)
 
     def validateIP(self):
-        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn getniccfg".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn getniccfg".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = sub.stdout.readlines()
         racadmIP = str(output[5]).replace("\\r", "").replace("\\n", "").strip("b'").replace(" ", "").split("=")[1]
         racadmSubnet = str(output[6]).replace("\\r", "").replace("\\n", "").strip("b'").replace(" ", "").split("=")[1]
@@ -119,7 +119,7 @@ class iDrac_Validation():
             print("Server IPv4 Status:             " + colors.FAIL + racadmIP + ", " + racadmSubnet + ", " + racadmGateway + colors.ENDC + " "*space + self.ip, self.subnet, self.gateway)
 
     def validateBootMode(self):
-        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn get BIOS.BiosBootSettings.BootMode".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn get BIOS.BiosBootSettings.BootMode".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = str(sub.stdout.readlines()[1])
         racadmBootMode = output.replace("\\r", "").replace("\\n", "").strip("b'").replace(" ", "").split("=")[1]
 
@@ -131,7 +131,7 @@ class iDrac_Validation():
             print("Server Boot Mode Status:        " + colors.FAIL + racadmBootMode + colors.ENDC + " "*space + self.boot_mode)
 
     def validateVConsole(self):
-        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn get idrac.VirtualConsole.plugintype".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn get idrac.VirtualConsole.plugintype".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = str(sub.stdout.readlines()[1])
         racadmVConsole = output.replace("\\r", "").replace("\\n", "").strip("b'").replace(" ", "").split("=")[1]
 
@@ -151,7 +151,7 @@ class iDrac_Validation():
                 print("Server Virtual Console Status:  " + colors.FAIL + "java" + colors.ENDC + " "*space + self.vconsole)
 
     def validateTimezone(self):
-        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn get idrac.time.timezone".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn get idrac.time.timezone".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = str(sub.stdout.readlines()[1])
         racadmTimezone = output.replace("\\r", "").replace("\\n", "").strip("b'").replace(" ", "").split("=")[1]
         space = 48 - len(racadmTimezone)
@@ -162,7 +162,7 @@ class iDrac_Validation():
             print("Server Timezone Status:         " + colors.FAIL + racadmTimezone + colors.ENDC + " "*space + self.timezone)
 
     def validateRaids(self):
-        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn storage get vdisks -o -p Layout,Name".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn storage get vdisks -o -p Layout,Name".format(self.pingable)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output = sub.stdout.readlines()
 
         racadmVDisks = []
