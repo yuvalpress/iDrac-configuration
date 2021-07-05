@@ -33,7 +33,7 @@ def ping(ip, times=1): #Check ping response
 
 def powerUpServer(tmp_ip, ip, name):
     if ping(tmp_ip):
-        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn racreset".format(tmp_ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn racreset".format(tmp_ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         isSuccess = sub.stdout.readlines()
         if "successfully" in str(isSuccess).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", ""):
             print(colors.OKGREEN + "{} Rac Reset was Successfull".format(name) + colors.ENDC)
@@ -48,7 +48,7 @@ def powerUpServer(tmp_ip, ip, name):
             return False
 
     elif ping(ip):
-        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn racreset".format(ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn racreset".format(ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         isSuccess = sub.stdout.readlines()
         if "successfully" in str(isSuccess).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", ""):
             print(colors.OKGREEN + "{} Rac Reset was Successfull".format(name) + colors.ENDC)
