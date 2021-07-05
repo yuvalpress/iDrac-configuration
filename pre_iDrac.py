@@ -38,7 +38,7 @@ class raidData:
 
     def getControllers(self):
         try:
-            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! storage get controllers".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password storage get controllers".format(self.ip)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output = sub.stdout.readlines()
             if "RAID" in str(output[2]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", ""):
                 controller = str(output[2]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
@@ -55,7 +55,7 @@ class iDrac_Pre():
 
     def powerUp(self):
         for server in self.servers:
-            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn serveraction powerup".format(server["tmp_ip"])], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn serveraction powerup".format(server["tmp_ip"])], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             print(sub.stdout.readlines[0].replace(" ", "").replace("\\r\\n", "").strip("b'"))
 
 
@@ -64,7 +64,7 @@ class iDrac_Pre():
             if server["Raid1_check"] == 1 or server["Raid2_Check"] == 1:
                 controller = raidData(server["tmp_ip"]).getControllers()
                 #get all disks names and states
-                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn storage get pdisks -o -p state".format(server["tmp_ip"])], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn storage get pdisks -o -p state".format(server["tmp_ip"])], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output = sub.stdout.readlines()
 
                 #collect all disks in "Ready" state
@@ -72,10 +72,10 @@ class iDrac_Pre():
                 for disk, state in zip(range(0, len(output), +2), range(1, len(output), +2)):
                     if "Online" not in output[state] and "Ready" not in output[state]:
                         all_non_ready.append(str(output[disk]).replace(" ", "").replace("\\r\\n", "").strip("b'"))
-                        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn storage converttoraid:{}".format(server["tmp_ip"], str(output[disk]).replace(" ", "").replace("\\r\\n", "").strip("b'"))], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn storage converttoraid:{}".format(server["tmp_ip"], str(output[disk]).replace(" ", "").replace("\\r\\n", "").strip("b'"))], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 
                 if len(all_non_ready) != 0:
-                    sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn jobqueue create {} --realtime".format(server["tmp_ip"], controller)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn jobqueue create {} --realtime".format(server["tmp_ip"], controller)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     output = sub.stdout.readlines()
                     line = str(output[2]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
 
@@ -87,7 +87,7 @@ class iDrac_Pre():
                         trueUntil = True
                         while trueUntil:
                             #Run until job is done
-                            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p Customer1! --nocertwarn jobqueue view -i {}".format(server["ip]"], JID)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                            sub = subprocess.Popen(["powershell", "& racadm -r {} -u root -p password --nocertwarn jobqueue view -i {}".format(server["ip]"], JID)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                             lines = sub.stdout.readlines()
                             line3 = str(lines[3]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
                             line7 = str(lines[7]).strip("b'").replace("\\r\\n", "").replace(" ", "").replace("\\r", "")
